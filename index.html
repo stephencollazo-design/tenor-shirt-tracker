@@ -15,8 +15,10 @@
   body{background:#121212;color:#e0e0e0;font-family:-apple-system,Arial,sans-serif;min-height:100vh;padding:12px;padding-bottom:env(safe-area-inset-bottom,12px)}
   h1{text-align:center;font-size:1.2rem;color:#fff;margin-bottom:3px;letter-spacing:.5px}
   .subtitle{text-align:center;color:#666;font-size:.75rem;margin-bottom:12px}
+
   .progress-wrap{background:#1e1e1e;border-radius:6px;height:8px;margin-bottom:12px;overflow:hidden}
   .progress-fill{height:100%;background:linear-gradient(90deg,#388e3c,#66bb6a);border-radius:6px;transition:width .4s}
+
   .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
   .stat{background:#1a1a1a;border:1px solid #242424;border-radius:8px;padding:7px 4px;text-align:center}
   .stat .n{font-size:1.3rem;font-weight:700}
@@ -25,37 +27,48 @@
   .stat.b .n{color:#42a5f5}
   .stat.p .n{color:#ab47bc}
   .stat.y .n{color:#ffa726}
+
   .controls{display:flex;gap:8px;margin-bottom:10px;align-items:center}
   .search{flex:1;padding:9px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;color:#e0e0e0;font-size:.9rem;outline:none}
   .search:focus{border-color:#444}
+
   .filters{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
   .fb{padding:5px 11px;border-radius:16px;border:1px solid #333;background:#1a1a1a;color:#888;font-size:.75rem;cursor:pointer;transition:all .15s}
   .fb.on{background:#262626;color:#ddd;border-color:#555}
+
   .sorts{display:flex;gap:5px;margin-bottom:12px;align-items:center}
   .sl{color:#555;font-size:.7rem;margin-right:2px}
   .sb{padding:4px 10px;border-radius:5px;border:1px solid #2a2a2a;background:#1a1a1a;color:#777;font-size:.72rem;cursor:pointer}
   .sb.on{background:#242424;color:#ddd;border-color:#444}
+
   .list{display:flex;flex-direction:column;gap:1px}
   .row{display:grid;grid-template-columns:36px 1fr auto auto;align-items:center;gap:8px;padding:10px 8px;background:#181818;border-radius:6px;cursor:pointer;transition:background .15s;-webkit-user-select:none;user-select:none}
   .row:active{background:#222}
   .row.done{background:#0d1a0d}
   .row.done .rname{text-decoration:line-through;color:#555}
+
   .chk{width:22px;height:22px;border-radius:5px;border:2px solid #3a3a3a;background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0}
   .chk.on{background:#4caf50;border-color:#4caf50;color:#fff;font-size:13px;font-weight:bold}
+
   .rname{font-size:.88rem;line-height:1.2}
   .rsz{font-size:.72rem;color:#777;background:#222;padding:2px 6px;border-radius:3px;font-weight:600;flex-shrink:0}
+
   .badge{padding:4px 9px;border-radius:10px;font-size:.7rem;font-weight:700;cursor:pointer;flex-shrink:0;-webkit-user-select:none;user-select:none}
   .badge.paid{background:#1b5e20;color:#a5d6a7;border:1px solid #2e7d32}
   .badge.covered{background:#1a237e;color:#90caf9;border:1px solid #283593}
   .badge.owes{background:#4a1010;color:#ef9a9a;border:1px solid #7f1d1d}
+
   .empty{text-align:center;color:#444;padding:30px;font-size:.85rem}
+
   .reset{margin-left:auto;padding:7px 12px;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:7px;color:#666;font-size:.75rem;cursor:pointer}
 </style>
 </head>
 <body>
-<h1>Tenor Shirt Pickup</h1>
-<div class="subtitle">Tap row = picked up - Tap badge = cycle payment</div>
+<h1>👕 Tenor Shirt Pickup</h1>
+<div class="subtitle">Tap row = picked up &nbsp;·&nbsp; Tap badge = cycle payment</div>
+
 <div class="progress-wrap"><div class="progress-fill" id="pbar"></div></div>
+
 <div class="stats">
   <div class="stat"><div class="n" id="sAll">0</div><div class="l">Total</div></div>
   <div class="stat g"><div class="n" id="sPU">0</div><div class="l">Got it</div></div>
@@ -63,61 +76,158 @@
   <div class="stat p"><div class="n" id="sCov">0</div><div class="l">Covered</div></div>
   <div class="stat y"><div class="n" id="sOwes">0</div><div class="l">Owes $</div></div>
 </div>
+
 <div class="controls">
-  <input class="search" id="q" type="text" placeholder="Search..." oninput="render()">
+  <input class="search" id="q" type="text" placeholder="🔍 Search…" oninput="render()">
   <button class="reset" onclick="resetAll()">Reset</button>
 </div>
+
 <div class="filters">
   <button class="fb on" onclick="filt('all',this)">All</button>
   <button class="fb" onclick="filt('pending',this)">Not picked up</button>
   <button class="fb" onclick="filt('done',this)">Picked up</button>
   <button class="fb" onclick="filt('owes',this)">Owes $</button>
 </div>
+
 <div class="sorts">
   <span class="sl">Sort:</span>
   <button class="sb on" onclick="srt('name',this)">Name</button>
   <button class="sb" onclick="srt('size',this)">Size</button>
   <button class="sb" onclick="srt('pay',this)">Payment</button>
 </div>
+
 <div class="list" id="list"></div>
 <div class="empty" id="empty" style="display:none">No matches.</div>
+
 <script>
 const SZ=['S','M','L','XL','2XL','3XL','4XL'];
 const RAW=[
-  {name:"Stephen Collazo",size:"3XL",status:"paid"},{name:"Carlos Villarroel",size:"XL",status:"owes"},
-  {name:"Laurel Powers",size:"2XL",status:"paid"},{name:"Elio Sanchez",size:"M",status:"paid"},
-  {name:"Emerald Yankovich",size:"3XL",status:"paid"},{name:"Andrew Breland",size:"L",status:"paid"},
-  {name:"Josh Nunez",size:"L",status:"paid"},{name:"Brandon Oxley",size:"M",status:"owes"},
-  {name:"John Valenta",size:"S",status:"paid"},{name:"Blake Gilmore",size:"XL",status:"paid"},
-  {name:"Mark Vines",size:"L",status:"paid"},{name:"Marty Lundstrom",size:"M",status:"covered"},
-  {name:"Andrew Segrest",size:"3XL",status:"covered"},{name:"Thomas Ward",size:"L",status:"paid"},
-  {name:"James Harvey",size:"XL",status:"paid"},{name:"Nick Germanotta",size:"M",status:"paid"},
-  {name:"Charlie Lupica",size:"XL",status:"paid"},{name:"Kevin Bradshaw",size:"L",status:"paid"},
-  {name:"Nathan Stuckey",size:"2XL",status:"paid"},{name:"Connor Dorsey",size:"M",status:"owes"},
-  {name:"Ming Wang",size:"M",status:"paid"},{name:"Miguel Cavazos",size:"M",status:"owes"},
-  {name:"Jared Suarez Ortega",size:"XL",status:"paid"},{name:"Davis Flowers",size:"M",status:"paid"},
-  {name:"Miguel Cosmo Venega",size:"2XL",status:"paid"},{name:"Pascual Diaz",size:"XL",status:"paid"},
-  {name:"Rodnay Rodriguez Toledo",size:"2XL",status:"paid"},{name:"Brentley Suarez",size:"2XL",status:"paid"},
-  {name:"Nic Campero",size:"M",status:"owes"},{name:"Brian Barringer",size:"4XL",status:"paid"},
-  {name:"Idorenyin Udoh",size:"2XL",status:"paid"},{name:"Kevin Pattison",size:"S",status:"paid"},
-  {name:"Kenny Benavente",size:"L",status:"paid"},{name:"Rafael Nava",size:"L",status:"paid"},
+  {name:"Stephen Collazo",size:"3XL",status:"paid"},
+  {name:"Carlos Villarroel",size:"XL",status:"owes"},
+  {name:"Laurel Powers",size:"2XL",status:"paid"},
+  {name:"Elio Sanchez",size:"M",status:"paid"},
+  {name:"Emerald Yankovich",size:"3XL",status:"paid"},
+  {name:"Andrew Breland",size:"L",status:"paid"},
+  {name:"Josh Nuñez",size:"L",status:"paid"},
+  {name:"Brandon Oxley",size:"M",status:"owes"},
+  {name:"John Valenta",size:"S",status:"paid"},
+  {name:"Blake Gilmore",size:"XL",status:"paid"},
+  {name:"Mark Vines",size:"L",status:"paid"},
+  {name:"Marty Lundstrom",size:"M",status:"covered"},
+  {name:"Andrew Segrest",size:"3XL",status:"covered"},
+  {name:"Thomas Ward",size:"L",status:"paid"},
+  {name:"James Harvey",size:"XL",status:"paid"},
+  {name:"Nick Germanotta",size:"M",status:"paid"},
+  {name:"Charlie Lupica",size:"XL",status:"paid"},
+  {name:"Kevin Bradshaw",size:"L",status:"paid"},
+  {name:"Nathan Stuckey",size:"2XL",status:"paid"},
+  {name:"Connor Dorsey",size:"M",status:"owes"},
+  {name:"Ming Wang",size:"M",status:"paid"},
+  {name:"Miguel Cavazos",size:"M",status:"owes"},
+  {name:"Jared Suarez Ortega",size:"XL",status:"paid"},
+  {name:"Davis Flowers",size:"M",status:"paid"},
+  {name:'Miguel "Cosmo" Venega',size:"2XL",status:"paid"},
+  {name:"Pascual Díaz",size:"XL",status:"paid"},
+  {name:"Rodnay Rodriguez Toledo",size:"2XL",status:"paid"},
+  {name:"Brentley Suarez",size:"2XL",status:"paid"},
+  {name:"Nic Campero",size:"M",status:"owes"},
+  {name:"Brian Barringer",size:"4XL",status:"paid"},
+  {name:"Idorenyin Udoh",size:"2XL",status:"paid"},
+  {name:"Kevin Pattison",size:"S",status:"paid"},
+  {name:"Kenny Benavente",size:"L",status:"paid"},
+  {name:"Rafael Nava",size:"L",status:"paid"},
   {name:"Gilbert Milan",size:"3XL",status:"owes"},
 ];
+
 const KEY='tshirt_pwa_v1';
-let cf='all',cs='name',data=load();
-function load(){try{const s=localStorage.getItem(KEY);if(s){const p=JSON.parse(s);return RAW.map(r=>{const f=p.find(x=>x.name===r.name);return{...r,pu:f?f.pu:false,status:f?f.status:r.status};});}}catch(e){}return RAW.map(r=>({...r,pu:false}));}
+let cf='all', cs='name';
+let data=load();
+
+function load(){
+  try{
+    const s=localStorage.getItem(KEY);
+    if(s){
+      const p=JSON.parse(s);
+      return RAW.map(r=>{const f=p.find(x=>x.name===r.name);return{...r,pu:f?f.pu:false,status:f?f.status:r.status};});
+    }
+  }catch(e){}
+  return RAW.map(r=>({...r,pu:false}));
+}
 function save(){localStorage.setItem(KEY,JSON.stringify(data.map(r=>({name:r.name,pu:r.pu,status:r.status}))));}
+
 function filt(f,b){cf=f;document.querySelectorAll('.fb').forEach(x=>x.classList.remove('on'));b.classList.add('on');render();}
 function srt(s,b){cs=s;document.querySelectorAll('.sb').forEach(x=>x.classList.remove('on'));b.classList.add('on');render();}
-function cyclePay(name,e){e.stopPropagation();const p=data.find(x=>x.name===name);if(!p)return;const c=['owes','paid','covered'];p.status=c[(c.indexOf(p.status)+1)%c.length];save();render();}
-function togglePU(name){const p=data.find(x=>x.name===name);if(!p)return;p.pu=!p.pu;save();render();}
-function resetAll(){if(!confirm('Reset all progress?'))return;data=RAW.map(r=>({...r,pu:false}));save();render();}
-function getRows(){const q=document.getElementById('q').value.toLowerCase();let rows=data.filter(p=>{if(q&&!p.name.toLowerCase().includes(q))return false;if(cf==='pending')return!p.pu;if(cf==='done')return p.pu;if(cf==='owes')return p.status==='owes';return true;});return[...rows].sort((a,b)=>{if(cs==='name')return a.name.localeCompare(b.name);if(cs==='size')return SZ.indexOf(a.size)-SZ.indexOf(b.size);if(cs==='pay'){const o={owes:0,covered:1,paid:2};return(o[a.status]??0)-(o[b.status]??0);}return 0;});}
-function render(){const rows=getRows();const list=document.getElementById('list');const empty=document.getElementById('empty');if(!rows.length){list.innerHTML='';empty.style.display='block';}else{empty.style.display='none';list.innerHTML=rows.map(p=>'<div class="row'+(p.pu?' done':'')+'" onclick="togglePU('+JSON.stringify(p.name)+')"><div class="chk'+(p.pu?' on':'')+'">'+( p.pu?'&#10003;':'')+' </div><div class="rname">'+p.name+'</div><div class="rsz">'+p.size+'</div><div class="badge '+p.status+'" onclick="cyclePay('+JSON.stringify(p.name)+',event)">'+(p.status==='paid'?'Paid':p.status==='covered'?'Covered':'Owes $')+'</div></div>').join('');}
-const pu=data.filter(x=>x.pu).length,paid=data.filter(x=>x.status==='paid').length,cov=data.filter(x=>x.status==='covered').length,owes=data.filter(x=>x.status==='owes').length;
-document.getElementById('sAll').textContent=data.length;document.getElementById('sPU').textContent=pu;document.getElementById('sPaid').textContent=paid;document.getElementById('sCov').textContent=cov;document.getElementById('sOwes').textContent=owes;
-document.getElementById('pbar').style.width=(data.length?pu/data.length*100:0)+'%';}
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+function cyclePay(name){
+  const p=data.find(x=>x.name===name);if(!p)return;
+  const c=['owes','paid','covered'];
+  p.status=c[(c.indexOf(p.status)+1)%c.length];
+  save();render();
+}
+function togglePU(name){
+  const p=data.find(x=>x.name===name);if(!p)return;
+  p.pu=!p.pu;save();render();
+}
+function resetAll(){
+  if(!confirm('Reset all progress?'))return;
+  data=RAW.map(r=>({...r,pu:false}));save();render();
+}
+
+function getRows(){
+  const q=document.getElementById('q').value.toLowerCase();
+  let rows=data.filter(p=>{
+    if(q&&!p.name.toLowerCase().includes(q))return false;
+    if(cf==='pending')return!p.pu;
+    if(cf==='done')return p.pu;
+    if(cf==='owes')return p.status==='owes';
+    return true;
+  });
+  rows=[...rows].sort((a,b)=>{
+    if(cs==='name')return a.name.localeCompare(b.name);
+    if(cs==='size')return SZ.indexOf(a.size)-SZ.indexOf(b.size);
+    if(cs==='pay'){const o={owes:0,covered:1,paid:2};return(o[a.status]??0)-(o[b.status]??0);}
+    return 0;
+  });
+  return rows;
+}
+
+function render(){
+  const rows=getRows();
+  const list=document.getElementById('list');
+  const empty=document.getElementById('empty');
+  if(!rows.length){list.innerHTML='';empty.style.display='block';}
+  else{
+    empty.style.display='none';
+    list.innerHTML=rows.map(p=>`
+      <div class="row${p.pu?' done':''}" data-name="${p.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">
+        <div class="chk${p.pu?' on':''}">${p.pu?'✓':''}</div>
+        <div class="rname">${p.name}</div>
+        <div class="rsz">${p.size}</div>
+        <div class="badge ${p.status}" data-badge="${p.name.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">${p.status==='paid'?'✓ Paid':p.status==='covered'?'★ Cov':'⚠ Owes'}</div>
+      </div>`).join('');
+  }
+  const pu=data.filter(x=>x.pu).length;
+  const paid=data.filter(x=>x.status==='paid').length;
+  const cov=data.filter(x=>x.status==='covered').length;
+  const owes=data.filter(x=>x.status==='owes').length;
+  document.getElementById('sAll').textContent=data.length;
+  document.getElementById('sPU').textContent=pu;
+  document.getElementById('sPaid').textContent=paid;
+  document.getElementById('sCov').textContent=cov;
+  document.getElementById('sOwes').textContent=owes;
+  document.getElementById('pbar').style.width=(data.length?pu/data.length*100:0)+'%';
+}
+
+document.getElementById('list').addEventListener('click',function(e){
+  const badge=e.target.closest('[data-badge]');
+  if(badge){e.stopPropagation();cyclePay(badge.dataset.badge);return;}
+  const row=e.target.closest('[data-name]');
+  if(row)togglePU(row.dataset.name);
+});
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
 render();
 </script>
 </body>
