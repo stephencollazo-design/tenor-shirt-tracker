@@ -1,0 +1,14 @@
+{
+  "name": "Tenor Shirt Pickup",
+  "short_name": "ShirtTracker",
+  "description": "Track t-shirt pickup and payment for the tenor section",
+  "start_url": "/tenor-shirt-tracker/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
